@@ -56,7 +56,7 @@ func main() {
 	}
 	endTime := time.Now()
 	elapsedTime := endTime.Sub(startTime)
-	fmt.Printf("Process took: %d ns to process %d iterations with an Event containing a reading of %d bytes\n", elapsedTime.Nanoseconds(), numberOfIterations,len(cborBytes))
+	fmt.Printf("Process took: %d ns on average to process %d iterations with an Event containing a reading of %d bytes\n", elapsedTime.Nanoseconds()/numberOfIterations, numberOfIterations,len(cborBytes))
 
 	var rtm runtime.MemStats
 	runtime.ReadMemStats(&rtm)
