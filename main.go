@@ -3,15 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/AnthonyMBonafide/edgex-cbor-benchmark/serialize"
+	"github.com/google/uuid"
 	"os"
 	"runtime"
 	"strconv"
 	"time"
 )
-
-var SmallFile = "/home/anthony/GoLandProjects/edgex-cbor-benchmark/small.txt"
-var MediumFile = "/home/anthony/GoLandProjects/edgex-cbor-benchmark/medium.txt"
-var LargeFile = "/home/anthony/GoLandProjects/edgex-cbor-benchmark/large.txt"
 
 func main() {
 	argsWithoutProg := os.Args[1:]
@@ -34,21 +31,22 @@ func main() {
 		panic("Failed to parse in number of iterations, Please enter a valid integer value")
 	}
 
-	//e := codecgen.GenerateTestEvent()
 	cborBytes, err := serialize.NewBinaryEvent(file)
 	if err != nil{
 		panic("Error creating binary event: " + err.Error())
 	}
 
 	// Metrics starts from here
+	fmt.Println("System statistics before executing tests:")
+	printSystemStats()
+	fmt.Println("Starting test....")
 	startTime := time.Now()
-
 	for i := int64(0); i < numberOfIterations; i++ {
 		// 1. simulates getting a CBOR request and serializing into domain object
 		se := serialize.Decode(cborBytes)
 
 		// 2. Update the domain object with information only the backed service has
-		se.ID = "Something completely different"
+		se.ID = uuid.New().String()
 		se.Pushed = 9876543
 
 		// 3. Re-encode the data to CBOR
@@ -56,10 +54,15 @@ func main() {
 	}
 	endTime := time.Now()
 	elapsedTime := endTime.Sub(startTime)
-	fmt.Printf("Process took: %d ns on average to process %d iterations with an Event containing a reading of %d bytes\n", elapsedTime.Nanoseconds()/numberOfIterations, numberOfIterations,len(cborBytes))
+	fmt.Printf("Execution took: %d ns on average to process %d iterations with an Event containing a reading of %d bytes\n", elapsedTime.Nanoseconds()/numberOfIterations, numberOfIterations,len(cborBytes))
+	fmt.Println("System statistics after executing tests:")
+	printSystemStats()
+}
 
+func printSystemStats(){
 	var rtm runtime.MemStats
 	runtime.ReadMemStats(&rtm)
+	fmt.Println("------------------------------------------------------------")
 	fmt.Printf("Allocated Memory: %d\n", rtm.Alloc)
 	fmt.Printf("Total Memory: %d\n", rtm.TotalAlloc)
 	fmt.Printf("System Memory: %d\n", rtm.Sys)
@@ -68,5 +71,5 @@ func main() {
 	fmt.Printf("Heap Objects: %d\n", rtm.HeapObjects)
 	fmt.Printf("GC runs: %d\n", rtm.NumGC)
 	fmt.Printf("GC Stop the world time: %dms\n", rtm.PauseTotalNs/1000000)
-
+	fmt.Println("------------------------------------------------------------")
 }

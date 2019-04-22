@@ -26,15 +26,31 @@ When executing the benchmark test via the command line you need to specify the n
 
 Example result:
 ```bash
-Process took: 3333802759 ns to process 1000000 iterations with an Event containing a reading of 12583310 bytes
-Allocated Memory: 23219120
-Total Memory: 2169573640
-System Memory: 72481016
-Memory Allocations: 28001692
-Memory Frees: 27865208
-Heap Objects: 136484
-GC runs: 180
-GC Stop the world time: 21ms
+System statistics before executing tests:
+------------------------------------------------------------
+Allocated Memory: 25455296
+Total Memory: 25572616
+System Memory: 72022264
+Memory Allocations: 1654
+Memory Frees: 368
+Heap Objects: 1286
+GC runs: 2
+GC Stop the world time: 0ms
+------------------------------------------------------------
+Starting test....
+Execution took: 4326 ns on average to process 1000000 iterations with an Event containing a reading of 12583310 bytes
+System statistics after executing tests:
+------------------------------------------------------------
+Allocated Memory: 16075816
+Total Memory: 2233577792
+System Memory: 72743160
+Memory Allocations: 30001699
+Memory Frees: 29956842
+Heap Objects: 44857
+GC runs: 186
+GC Stop the world time: 19ms
+------------------------------------------------------------
+
 ```
 
 *NOTE*
