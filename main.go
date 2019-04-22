@@ -39,8 +39,8 @@ func main() {
 	// Metrics starts from here
 	fmt.Println("System statistics before executing tests:")
 	printSystemStats()
-	fmt.Println("Starting test....")
 	startTime := time.Now()
+	fmt.Println("Starting test at "+ startTime.Format(time.RFC3339Nano))
 	for i := int64(0); i < numberOfIterations; i++ {
 		// 1. simulates getting a CBOR request and serializing into domain object
 		se := serialize.Decode(cborBytes)
@@ -54,6 +54,7 @@ func main() {
 	}
 	endTime := time.Now()
 	elapsedTime := endTime.Sub(startTime)
+	fmt.Println("Test completed at "+ endTime.Format(time.RFC3339Nano))
 	fmt.Printf("Execution took: %d ns on average to process %d iterations with an Event containing a reading of %d bytes\n", elapsedTime.Nanoseconds()/numberOfIterations, numberOfIterations,len(cborBytes))
 	fmt.Println("System statistics after executing tests:")
 	printSystemStats()
