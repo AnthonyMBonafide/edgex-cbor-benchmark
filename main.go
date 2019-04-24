@@ -31,23 +31,25 @@ func main() {
 		panic("Failed to parse in number of iterations, Please enter a valid integer value")
 	}
 
+	fmt.Println("System statistics before executing tests:")
+	printSystemStats()
+
 	cborBytes, err := cpy.NewBinaryEvent(file)
 	if err != nil{
 		panic("Error creating binary event: " + err.Error())
 	}
 
 	// Metrics starts from here
-	fmt.Println("System statistics before executing tests:")
-	printSystemStats()
 	startTime := time.Now()
 	fmt.Println("Starting test at "+ startTime.Format(time.RFC3339Nano))
 	for i := int64(0); i < numberOfIterations; i++ {
+
 		// 1. simulates getting a CBOR request and serializing into domain object
 		se := cpy.Decode(cborBytes)
 
 		// 2. Update the domain object with information only the backed service has
 		se.ID = uuid.New().String()
-		se.Pushed = 9876543
+		se.Pushed = i
 
 		// 3. Re-encode the data to CBOR
 		cpy.Encode(se)
@@ -55,7 +57,7 @@ func main() {
 	endTime := time.Now()
 	elapsedTime := endTime.Sub(startTime)
 	fmt.Println("Test completed at "+ endTime.Format(time.RFC3339Nano))
-	fmt.Printf("Execution took: %d ns on average to process %d iterations with an Event containing a reading of %d bytes\n", elapsedTime.Nanoseconds()/numberOfIterations, numberOfIterations,len(cborBytes))
+	fmt.Printf("Execution took: %d ms on average to process %d iterations with an Event containing a reading of %d bytes\n", (elapsedTime.Nanoseconds()/1000000)/numberOfIterations, numberOfIterations,len(cborBytes))
 	fmt.Println("System statistics after executing tests:")
 	printSystemStats()
 }
