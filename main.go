@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/AnthonyMBonafide/edgex-cbor-benchmark/serialize"
+	cpy "github.com/AnthonyMBonafide/edgex-cbor-benchmark/copy"
 	"github.com/google/uuid"
 	"os"
 	"runtime"
@@ -31,7 +31,7 @@ func main() {
 		panic("Failed to parse in number of iterations, Please enter a valid integer value")
 	}
 
-	cborBytes, err := serialize.NewBinaryEvent(file)
+	cborBytes, err := cpy.NewBinaryEvent(file)
 	if err != nil{
 		panic("Error creating binary event: " + err.Error())
 	}
@@ -43,14 +43,14 @@ func main() {
 	fmt.Println("Starting test at "+ startTime.Format(time.RFC3339Nano))
 	for i := int64(0); i < numberOfIterations; i++ {
 		// 1. simulates getting a CBOR request and serializing into domain object
-		se := serialize.Decode(cborBytes)
+		se := cpy.Decode(cborBytes)
 
 		// 2. Update the domain object with information only the backed service has
 		se.ID = uuid.New().String()
 		se.Pushed = 9876543
 
 		// 3. Re-encode the data to CBOR
-		serialize.Encode(se)
+		cpy.Encode(se)
 	}
 	endTime := time.Now()
 	elapsedTime := endTime.Sub(startTime)
